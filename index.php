@@ -40,7 +40,7 @@ while($row = $table->fetch(PDO::FETCH_ASSOC)){
     echo "<td>" . htmlspecialchars($row['name']) . "</td>";
     echo "<td>" . htmlspecialchars($row['age']) . "</td>";
     echo "<td>" . htmlspecialchars($row['salary']) . "</td>";
-    echo "<td><a href='delete_worker.php?id=".urlencode($row['id']). "'>delete</a></td>";
+    echo "<td><a href='delete_worker.php?id=".urlencode($row['id']). "'>delete</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href='edit_worker.php?id=".urlencode($row['id']). "'>edit</a></td>";
     echo "</tr>";
 }
 
