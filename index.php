@@ -21,7 +21,18 @@ $createTable = "CREATE TABLE IF NOT EXISTS workers (
 
 //$conn->exec($createTable);
 
-$table = $conn->query("SELECT * FROM workers");
+$limit = 2;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+$data = $conn->prepare("SELECT * FROM workers LIMIT ?, ?");
+$data->bindParam(1, $offset, PDO::PARAM_INT);
+$data->bindParam(2, $limit, PDO::PARAM_INT);
+$data->execute();
+$rows = $data->fetchAll();
+
+$totalData = $conn->query("SELECT COUNT(*) FROM workers");
+$totalRows = $totalData->fetchColumn();
+$totalPages = ceil($totalRows / $limit);
 
 echo "<table border='1'>";
 echo "<thead><tr>
@@ -34,7 +45,7 @@ echo "<thead><tr>
       </thead>
       <tbody>";
 
-while($row = $table->fetch(PDO::FETCH_ASSOC)){
+foreach ($rows as $row) {
     echo "<tr>";
     echo "<td>" . htmlspecialchars($row['id']) . "</td>";
     echo "<td>" . htmlspecialchars($row['name']) . "</td>";
@@ -45,6 +56,15 @@ while($row = $table->fetch(PDO::FETCH_ASSOC)){
 }
 
 echo "</tbody></table>";
-echo "<a href='add_worker.php'>Add a worker</a>";
+
+for ($i = 1; $i <= $totalPages; $i++) {
+    if ($i == $page) {
+        echo "<strong>$i</strong> ";
+    } else {
+        echo "<a href=\"?page=$i\">$i</a> ";
+    }
+}
+
+echo "&nbsp&nbsp&nbsp&nbsp&nbsp<a href='add_worker.php'>Add a worker</a>";
 
 
